@@ -11,6 +11,8 @@
 #	use w (up), s (down), a (left), d (right), space (exit)
 #	all other keys are ignored
 
+.include	"macro_file.asm"
+
 # set up some constants
 # width of screen in pixels
 # 256 / 8 = 32
@@ -26,14 +28,14 @@
 .eqv	CYAN	0x0000FFFF
 .eqv	MAGENTA	0x00FF00FF
 
-.text
+	.text
 main:
 	addi 	$a0, $0, 63    # a0 = X = 0
 	addi 	$a1, $0, 31   # a1 = Y = 0
 	addi 	$a2, $0, GREEN  # a2 = red (ox00RRGGBB)
 	jal	draw_pixel
 	# set up starting position (top left)
-	addi 	$a0, $0, 1    # a0 = X = 0
+	addi 	$a0, $0, 0    # a0 = X = 0
 	addi 	$a1, $0, 0   # a1 = Y = 0
 	addi 	$a2, $0, RED  # a2 = red (ox00RRGGBB)
 	
@@ -88,7 +90,8 @@ right:	li	$a2, 0		# black out the pixel
 	jal	draw_pixel
 	j	loop
 		
-exit:	li	$v0, 10
+exit:	print_str("Congrats on completing the game! \n")
+	li	$v0, 10
 	syscall
 
 #################################################
