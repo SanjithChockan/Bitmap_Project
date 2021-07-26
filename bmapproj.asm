@@ -30,17 +30,15 @@
 
 	.text
 main:
-	addi 	$a0, $0, 63    # a0 = X = 0
-	addi 	$a1, $0, 31   # a1 = Y = 0
-	addi 	$a2, $0, GREEN  # a2 = red (ox00RRGGBB)
-	jal	draw_pixel
+	draw_pixel(63, 31, GREEN)
 	# set up starting position (top left)
 	addi 	$a0, $0, 0    # a0 = X = 0
 	addi 	$a1, $0, 0   # a1 = Y = 0
 	addi 	$a2, $0, RED  # a2 = red (ox00RRGGBB)
+	draw_pixel(0, 0, RED)
 	
 loop:	# draw a red  pixel 
-	jal 	draw_pixel
+	draw_pixel($a0, $a1, $a2)
 	
 	# check for input
 	lw $t0, 0xffff0000  #t1 holds if input available
@@ -59,46 +57,41 @@ loop:	# draw a red  pixel
 	# process valid input
 	
 up:	li	$a2, 0		# black out the pixel
-	jal	draw_pixel
+	draw_pixel($a0, $a1, $a2)
 	addi	$a1, $a1, -1
 	jal	is_finished
 	addi 	$a2, $0, RED
-	jal	draw_pixel
+	draw_pixel($a0, $a1, $a2)
 	j	loop
 
 down:	li	$a2, 0		# black out the pixel
-	jal	draw_pixel
+	draw_pixel($a0, $a1, $a2)
 	addi	$a1, $a1, 1
 	jal	is_finished
 	addi 	$a2, $0, RED
-	jal	draw_pixel
+	draw_pixel($a0, $a1, $a2)
 	j	loop
 	
 left:	li	$a2, 0		# black out the pixel
-	jal	draw_pixel
+	draw_pixel($a0, $a1, $a2)
 	addi	$a0, $a0, -1
 	jal	is_finished
 	addi 	$a2, $0, RED
-	jal	draw_pixel
+	draw_pixel($a0, $a1, $a2)
 	j	loop
 	
 right:	li	$a2, 0		# black out the pixel
-	jal	draw_pixel
+	draw_pixel($a0, $a1, $a2)
 	addi	$a0, $a0, 1
 	jal	is_finished
 	addi 	$a2, $0, RED
-	jal	draw_pixel
+	draw_pixel($a0, $a1, $a2)
 	j	loop
 		
 exit:	print_str("Congrats on completing the game! \n")
 	li	$v0, 10
 	syscall
 
-#################################################
-# subroutine to draw a pixel
-# $a0 = X
-# $a1 = Y
-# $a2 = color
 is_finished:
 	# s1 = address = $gp + 4*(x + y*width)
 	mul	$t9, $a1, WIDTH   # y * WIDTH
@@ -109,13 +102,3 @@ is_finished:
 	addi 	$a2, $0, GREEN  # a2 = red (ox00RRGGBB)
 	beq	$a2, $t0, exit
 	jr	$ra
-	
-
-draw_pixel:
-	# s1 = address = $gp + 4*(x + y*width)
-	mul	$t9, $a1, WIDTH   # y * WIDTH
-	add	$t9, $t9, $a0	  # add X
-	mul	$t9, $t9, 4	  # multiply by 4 to get word offset
-	add	$t9, $t9, $gp	  # add to base address
-	sw	$a2, ($t9)	  # store color at memory location
-	jr 	$ra
