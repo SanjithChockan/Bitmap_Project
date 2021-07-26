@@ -59,7 +59,7 @@ loop:	# draw a red  pixel
 up:	li	$a2, 0		# black out the pixel
 	draw_pixel($a0, $a1, $a2)
 	addi	$a1, $a1, -1
-	jal	is_finished
+	is_finished($a0, $a1)
 	addi 	$a2, $0, RED
 	draw_pixel($a0, $a1, $a2)
 	j	loop
@@ -67,7 +67,7 @@ up:	li	$a2, 0		# black out the pixel
 down:	li	$a2, 0		# black out the pixel
 	draw_pixel($a0, $a1, $a2)
 	addi	$a1, $a1, 1
-	jal	is_finished
+	is_finished($a0, $a1)
 	addi 	$a2, $0, RED
 	draw_pixel($a0, $a1, $a2)
 	j	loop
@@ -75,7 +75,7 @@ down:	li	$a2, 0		# black out the pixel
 left:	li	$a2, 0		# black out the pixel
 	draw_pixel($a0, $a1, $a2)
 	addi	$a0, $a0, -1
-	jal	is_finished
+	is_finished($a0, $a1)
 	addi 	$a2, $0, RED
 	draw_pixel($a0, $a1, $a2)
 	j	loop
@@ -83,7 +83,7 @@ left:	li	$a2, 0		# black out the pixel
 right:	li	$a2, 0		# black out the pixel
 	draw_pixel($a0, $a1, $a2)
 	addi	$a0, $a0, 1
-	jal	is_finished
+	is_finished($a0, $a1)
 	addi 	$a2, $0, RED
 	draw_pixel($a0, $a1, $a2)
 	j	loop
@@ -92,13 +92,4 @@ exit:	print_str("Congrats on completing the game! \n")
 	li	$v0, 10
 	syscall
 
-is_finished:
-	# s1 = address = $gp + 4*(x + y*width)
-	mul	$t9, $a1, WIDTH   # y * WIDTH
-	add	$t9, $t9, $a0	  # add X
-	mul	$t9, $t9, 4	  # multiply by 4 to get word offset
-	add	$t9, $t9, $gp	  # add to base address
-	lw	$t0, ($t9)
-	addi 	$a2, $0, GREEN  # a2 = red (ox00RRGGBB)
-	beq	$a2, $t0, exit
-	jr	$ra
+
