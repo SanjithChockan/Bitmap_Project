@@ -1,17 +1,3 @@
-#### print_int ####  	print_int(4)	print_int($t0)
-.macro print_int (%x)
-    	li 	$v0, 1
-    	add	$a0, $zero, %x
-    	syscall
-.end_macro
-
-#### print_gloat ####  	print_loat(4.2)	print_int($f0)
-.macro print_float (%f)
-    	li 	$v0, 2
-    	mov.s $f12, %f
-    	syscall
-.end_macro
-
 #### print_str ####  	print_str("string in quotes")
 .macro print_str (%str)
     	.data
@@ -22,6 +8,7 @@ macro_str:	.asciiz %str
   	syscall
 .end_macro
 
+# draws a pixel at given coordinate
 .macro draw_pixel (%x, %y, %color)
 	
 	add 	$a0, $0, %x    
@@ -36,6 +23,9 @@ macro_str:	.asciiz %str
 	sw	$a2, ($t9)	  # store color at memory location
 .end_macro 
 
+# checks if the coordinates given contain blue
+# if it does, it does not draw red on top and 
+# returns to previous position
 .macro is_blue (%x, %y)
 	add 	$a0, $0, %x    
 	add 	$a1, $0, %y   
@@ -80,8 +70,11 @@ incr4:	# right
 	j	loop
 	
 end_m:	# do nothing
+
 .end_macro
 
+# checks if given coordinates contains green
+# if it does, it calls the exit label
 .macro is_finished (%x, %y)
 	add 	$a0, $0, %x    
 	add 	$a1, $0, %y   
@@ -96,6 +89,7 @@ end_m:	# do nothing
 	beq	$a2, $t0, exit
 .end_macro
 
+# draw pixel horizontally with a given length
 .macro	draw_horizontal (%x, %y, %c)
 	add 	$a0, $0, %x    
 	add 	$a1, $0, %y
@@ -109,6 +103,7 @@ looph:	addi	$a0, $a0, 1
 	
 .end_macro
 
+# draw pixel verticallly with a given length
 .macro	draw_vertical (%x, %y, %c)
 	add 	$a0, $0, %x    
 	add 	$a1, $0, %y
