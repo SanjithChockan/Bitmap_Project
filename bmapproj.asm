@@ -27,18 +27,35 @@
 .eqv	YELLOW	0x00FFFF00
 .eqv	CYAN	0x0000FFFF
 .eqv	MAGENTA	0x00FF00FF
+.eqv	BLACK	0x00000000
 
 	.text
 main:	print_str("Start program\n")
+	# draw margin
+	draw_vertical(0,-1,32)
+	draw_vertical(31,-1,31)
+	draw_horizontal(0, 0, 32)
+	li	$t1, 2
 	
-draw:	# sets up the maze 
-	draw_horizontal(-1, 2, 10)
-
-	# set up end point (bottom right, GREEN)
+draw:	# sets up the maze with horizontal lines
+	draw_horizontal(0, $t1, 30)
+	
+	# generate random number for path
+	li	$v0, 42
+	li	$a0, 1
+	li	$a1, 30
+	syscall
+	addi	$a0, $a0, 1
+	draw_pixel($a0, $t1, BLACK)	# black the pixel to make a path
+	
+	addi	$t1, $t1, 2
+	ble	$t1, 32, draw
+	
+init:	# set up end point (bottom right, GREEN)
 	draw_pixel(31, 31, GREEN)
 	# load this for start values to draw the red character
-	li	$a0, 0
-	li	$a1, 0
+	li	$a0, 1
+	li	$a1, 1
 	addi 	$a2, $0, RED
 loop:	# draw a red  pixel 
 	draw_pixel($a0, $a1, $a2)
@@ -101,4 +118,5 @@ exit:	print_str("Congrats on completing the game! \n")
 	li	$v0, 10
 	syscall
 
-
+inc_a:	addi	$a0, $a0, 1
+	jr	$ra

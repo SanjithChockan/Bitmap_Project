@@ -22,10 +22,11 @@ macro_str:	.asciiz %str
   	syscall
 .end_macro
 
-.macro draw_pixel (%x, %y, %c)
+.macro draw_pixel (%x, %y, %color)
+	
 	add 	$a0, $0, %x    
 	add 	$a1, $0, %y   
-	add 	$a2, $0, %c  
+	add 	$a2, $0, %color  
 	
 	# s1 = address = $gp + 4*(x + y*width)
 	mul	$t9, $a1, WIDTH   # y * WIDTH
@@ -80,6 +81,7 @@ incr4:	# right
 	
 end_m:	# do nothing
 .end_macro
+
 .macro is_finished (%x, %y)
 	add 	$a0, $0, %x    
 	add 	$a1, $0, %y   
@@ -104,5 +106,18 @@ looph:	addi	$a0, $a0, 1
 	draw_pixel($a0, $a1, $a2)
 	addi	$t0, $t0, -1
 	bnez	$t0, looph
+	
+.end_macro
+
+.macro	draw_vertical (%x, %y, %c)
+	add 	$a0, $0, %x    
+	add 	$a1, $0, %y
+	addi	$t0, $0, %c
+
+loopv:	addi	$a1, $a1, 1
+	addi 	$a2, $0, BLUE
+	draw_pixel($a0, $a1, $a2)
+	addi	$t0, $t0, -1
+	bnez	$t0, loopv
 	
 .end_macro
