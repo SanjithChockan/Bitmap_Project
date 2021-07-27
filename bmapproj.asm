@@ -2,6 +2,13 @@
 # Sanjith Chockan
 # July 26, 2021
 
+# Program Description:
+# The program is a game where the character goes through a 
+# random generated maze to the end to complete the game. 
+# The character is represented by a red pixel, which starts from the top left. 
+# It is controlled by the user to take it to the end, which is at the bottom right represented by a green pixel. 
+# Upon the completion of the game, you should receive a congratulating message on the console.
+
 # Instructions: 
 #   Connect bitmap display:
 #         set pixel dim to 8x8
